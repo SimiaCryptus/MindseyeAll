@@ -30,8 +30,8 @@ import com.simiacryptus.ref.wrappers.RefArrays;
 import com.simiacryptus.ref.wrappers.RefFunction;
 import com.simiacryptus.ref.wrappers.RefList;
 import com.simiacryptus.ref.wrappers.RefString;
-import jcuda.jcudnn.cudnnPoolingDescriptor;
-import jcuda.jcudnn.cudnnPoolingMode;
+import com.simiacryptus.mindseye.lang.cudnn.ffm.cudnnPoolingDescriptor;
+import com.simiacryptus.mindseye.lang.cudnn.ffm.cudnnPoolingMode;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;

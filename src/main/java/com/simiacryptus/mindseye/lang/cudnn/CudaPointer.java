@@ -19,7 +19,7 @@
 
 package com.simiacryptus.mindseye.lang.cudnn;
 
-import jcuda.Pointer;
+import com.simiacryptus.mindseye.lang.cudnn.ffm.Pointer;
 
 import javax.annotation.Nonnull;
 

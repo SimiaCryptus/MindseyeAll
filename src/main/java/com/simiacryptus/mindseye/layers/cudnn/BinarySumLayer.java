@@ -30,8 +30,8 @@ import com.simiacryptus.ref.wrappers.RefArrays;
 import com.simiacryptus.ref.wrappers.RefFunction;
 import com.simiacryptus.ref.wrappers.RefList;
 import com.simiacryptus.util.Util;
-import jcuda.jcudnn.cudnnOpTensorDescriptor;
-import jcuda.jcudnn.cudnnOpTensorOp;
+import com.simiacryptus.mindseye.lang.cudnn.ffm.cudnnOpTensorDescriptor;
+import com.simiacryptus.mindseye.lang.cudnn.ffm.cudnnOpTensorOp;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;

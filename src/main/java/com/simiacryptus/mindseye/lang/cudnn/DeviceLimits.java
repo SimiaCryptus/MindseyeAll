@@ -19,7 +19,7 @@
 
 package com.simiacryptus.mindseye.lang.cudnn;
 
-import static jcuda.runtime.cudaLimit.*;
+import static com.simiacryptus.mindseye.lang.cudnn.ffm.cudaLimit.*;
 
 /**
  * The enum Device limits.

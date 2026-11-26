@@ -20,8 +20,8 @@
 package com.simiacryptus.mindseye.lang.cudnn;
 
 import com.simiacryptus.mindseye.lang.Layer;
-import jcuda.Sizeof;
-import jcuda.jcudnn.cudnnDataType;
+import com.simiacryptus.mindseye.lang.cudnn.ffm.Sizeof;
+import com.simiacryptus.mindseye.lang.cudnn.ffm.cudnnDataType;
 
 import javax.annotation.Nonnull;
 import java.nio.ByteBuffer;

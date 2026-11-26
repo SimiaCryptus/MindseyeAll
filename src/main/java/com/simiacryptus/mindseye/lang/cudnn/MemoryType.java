@@ -28,14 +28,14 @@ import com.simiacryptus.ref.wrappers.RefMap;
 import com.simiacryptus.ref.wrappers.RefString;
 import com.simiacryptus.ref.wrappers.RefSystem;
 import com.simiacryptus.util.Util;
-import jcuda.runtime.cudaDeviceProp;
+import com.simiacryptus.mindseye.lang.cudnn.ffm.cudaDeviceProp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import static jcuda.runtime.JCuda.*;
+import static com.simiacryptus.mindseye.lang.cudnn.ffm.JCuda.*;
 
 /**
  * The enum Memory type.

@@ -24,7 +24,7 @@ import com.simiacryptus.mindseye.lang.Tensor;
 import com.simiacryptus.mindseye.layers.cudnn.conv.SimpleConvolutionLayer;
 import com.simiacryptus.ref.lang.RefUtil;
 import com.simiacryptus.ref.wrappers.*;
-import jcuda.runtime.cudaMemcpyKind;
+import com.simiacryptus.mindseye.lang.cudnn.ffm.cudaMemcpyKind;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import java.util.Map;
 
-import static jcuda.runtime.cudaMemcpyKind.cudaMemcpyDeviceToHost;
+import static com.simiacryptus.mindseye.lang.cudnn.ffm.cudaMemcpyKind.cudaMemcpyDeviceToHost;
 
 /**
  * The type Cuda memory.

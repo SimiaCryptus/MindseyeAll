@@ -28,7 +28,7 @@ import com.simiacryptus.ref.wrappers.RefArrays;
 import com.simiacryptus.ref.wrappers.RefFunction;
 import com.simiacryptus.ref.wrappers.RefList;
 import com.simiacryptus.ref.wrappers.RefString;
-import jcuda.jcudnn.*;
+import com.simiacryptus.mindseye.lang.cudnn.ffm.*;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;

@@ -31,8 +31,8 @@ import com.simiacryptus.ref.lang.RefUtil;
 import com.simiacryptus.ref.lang.ReferenceCounting;
 import com.simiacryptus.ref.wrappers.*;
 import com.simiacryptus.util.Util;
-import jcuda.Pointer;
-import jcuda.jcudnn.*;
+import com.simiacryptus.mindseye.lang.cudnn.ffm.Pointer;
+import com.simiacryptus.mindseye.lang.cudnn.ffm.*;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;

@@ -28,7 +28,7 @@ import com.simiacryptus.ref.lang.RefIgnore;
 import com.simiacryptus.ref.lang.RefUtil;
 import com.simiacryptus.ref.wrappers.*;
 import com.simiacryptus.util.Util;
-import jcuda.jcudnn.*;
+import com.simiacryptus.mindseye.lang.cudnn.ffm.*;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

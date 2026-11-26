@@ -21,9 +21,9 @@ package com.simiacryptus.mindseye.lang.cudnn;
 
 import com.simiacryptus.lang.TimedResult;
 import com.simiacryptus.ref.wrappers.*;
-import jcuda.jcudnn.*;
-import jcuda.runtime.JCuda;
-import jcuda.runtime.cudaDeviceProp;
+import com.simiacryptus.mindseye.lang.cudnn.ffm.*;
+import com.simiacryptus.mindseye.lang.cudnn.ffm.JCuda;
+import com.simiacryptus.mindseye.lang.cudnn.ffm.cudaDeviceProp;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -19,7 +19,7 @@
 
 package com.simiacryptus.mindseye.lang.cudnn;
 
-import jcuda.runtime.cudaStream_t;
+import com.simiacryptus.mindseye.lang.cudnn.ffm.cudaStream_t;
 
 import javax.annotation.Nonnull;
 

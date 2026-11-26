@@ -28,9 +28,9 @@ import com.simiacryptus.ref.wrappers.RefArrays;
 import com.simiacryptus.ref.wrappers.RefFunction;
 import com.simiacryptus.ref.wrappers.RefIntStream;
 import com.simiacryptus.ref.wrappers.RefList;
-import jcuda.jcudnn.JCudnn;
-import jcuda.jcudnn.cudnnOpTensorDescriptor;
-import jcuda.jcudnn.cudnnOpTensorOp;
+import com.simiacryptus.mindseye.lang.cudnn.ffm.JCudnn;
+import com.simiacryptus.mindseye.lang.cudnn.ffm.cudnnOpTensorDescriptor;
+import com.simiacryptus.mindseye.lang.cudnn.ffm.cudnnOpTensorOp;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
