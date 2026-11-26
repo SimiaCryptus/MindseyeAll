@@ -251,7 +251,7 @@ public final class MonitoringWrapperLayer extends WrapperLayer implements Monito
     }
     boolean alive = output.isAlive();
     TensorList data = output.getData();
-    Result.Accumulator accumulator = new Accumulator2(passbackNanos, items, output.getAccumulator());
+    Result.Accumulator accumulator = new Accumulator2(passbackNanos, items, output.getAccumulator(), recordSignalMetrics, backwardSignal, backwardPerformance);
     output.freeRef();
     return new Result(data, accumulator, alive);
   }
@@ -322,23 +322,32 @@ public final class MonitoringWrapperLayer extends WrapperLayer implements Monito
     }
   }
 
-  private class Accumulator2 extends Result.Accumulator {
+  private static class Accumulator2 extends Result.Accumulator {
 
     private final AtomicLong passbackNanos;
     private final int items;
+    private final boolean recordSignalMetrics;
+    private final ScalarStatistics backwardSignal;
+    private final PercentileStatistics backwardPerformance;
     private Result.Accumulator accumulator;
 
     /**
      * Instantiates a new Accumulator 2.
      *
-     * @param passbackNanos the passback nanos
-     * @param items         the items
-     * @param accumulator   the accumulator
+     * @param passbackNanos       the passback nanos
+     * @param items               the items
+     * @param accumulator         the accumulator
+     * @param recordSignalMetrics whether to record signal metrics
+     * @param backwardSignal      the backward signal statistics
+     * @param backwardPerformance the backward performance statistics
      */
-    public Accumulator2(AtomicLong passbackNanos, int items, Result.Accumulator accumulator) {
+    public Accumulator2(AtomicLong passbackNanos, int items, Result.Accumulator accumulator, boolean recordSignalMetrics, ScalarStatistics backwardSignal, PercentileStatistics backwardPerformance) {
       this.passbackNanos = passbackNanos;
       this.items = items;
       this.accumulator = accumulator;
+      this.recordSignalMetrics = recordSignalMetrics;
+      this.backwardSignal = backwardSignal;
+      this.backwardPerformance = backwardPerformance;
     }
 
     @Override

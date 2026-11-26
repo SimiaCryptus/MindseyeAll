@@ -253,7 +253,7 @@ public class MermaidGrapher {
     network.freeRef();
     final RefMap<UUID, MermaidNode> graphNodes = nodes.stream().collect(RefCollectors.toMap(
         node -> getUuid(node),
-        node -> new MermaidNode(fn.apply(node), node.getId(), node.getLayer())
+        node -> new MermaidNode(this, fn.apply(node), node.getId(), node.getLayer())
     ));
     RefUtil.freeRef(fn);
     final Map<UUID, List<UUID>> connections = connections(nodes.addRef());
@@ -288,13 +288,15 @@ public class MermaidGrapher {
     }
   }
 
-  protected final class MermaidNode extends ReferenceCountingBase {
+  protected static final class MermaidNode extends ReferenceCountingBase {
+    private final MermaidGrapher grapher;
     public final String name;
     public final UUID id;
     public final AtomicBoolean described = new AtomicBoolean(false);
     public final Layer layer;
 
-    protected MermaidNode(String name, UUID id, Layer layer) {
+    protected MermaidNode(MermaidGrapher grapher, String name, UUID id, Layer layer) {
+      this.grapher = grapher;
       this.name = name;
       this.id = id;
       this.layer = layer;
@@ -302,7 +304,7 @@ public class MermaidGrapher {
 
     @NotNull
     public String describe() {
-      return this.described.getAndSet(true) ? nodeID((MermaidNode) this.addRef()) : describeNode((MermaidNode) this.addRef());
+      return this.described.getAndSet(true) ? grapher.nodeID((MermaidNode) this.addRef()) : grapher.describeNode((MermaidNode) this.addRef());
     }
 
     @Override

@@ -179,7 +179,7 @@ public class QuadraticSearch implements LineSearchStrategy {
     if (currentRate > getMaxRate()) {
       currentRate = getMaxRate();
     }
-    Stepper stepper = new Stepper(cursor, monitor);
+    Stepper stepper = new Stepper(this, cursor, monitor);
     try {
       final PointSample pointSample = stepper.step();
       assert pointSample != null;
@@ -310,7 +310,9 @@ public class QuadraticSearch implements LineSearchStrategy {
     }
   }
 
-  private class Stepper extends ReferenceCountingBase {
+  private static class Stepper extends ReferenceCountingBase {
+    @Nonnull
+    private final QuadraticSearch search;
     @Nonnull
     private final LineSearchCursor cursor;
     @Nonnull
@@ -324,7 +326,8 @@ public class QuadraticSearch implements LineSearchStrategy {
     private LineSearchPoint rightPoint;
     private int loops;
 
-    private Stepper(@Nonnull LineSearchCursor cursor, @Nonnull TrainingMonitor monitor) {
+    private Stepper(@Nonnull QuadraticSearch search, @Nonnull LineSearchCursor cursor, @Nonnull TrainingMonitor monitor) {
+      this.search = search;
       this.cursor = cursor;
       this.monitor = monitor;
       this.thisX = 0;
@@ -364,9 +367,9 @@ public class QuadraticSearch implements LineSearchStrategy {
     @Nullable
     public PointSample step() {
       if (0 == leftPoint.derivative) {
-        return getPointSample(getLeftPoint());
+        return search.getPointSample(getLeftPoint());
       }
-      this.rightX = getCurrentRate() > 0 ? getCurrentRate()
+      this.rightX = search.getCurrentRate() > 0 ? search.getCurrentRate()
           : Math.abs(leftMean() * 1e-4 / this.leftPoint.derivative);
       RefUtil.freeRef(this.rightPoint);
       this.rightPoint = this.cursor.step(this.rightX, this.monitor);
@@ -400,14 +403,14 @@ public class QuadraticSearch implements LineSearchStrategy {
     private boolean locateInitialRightPoint() {
       LineSearchPoint prevRightPoint = getRightPoint();
       try {
-        if (isSame(cursor.addRef(), monitor,
+        if (search.isSame(cursor.addRef(), monitor,
             getLeftPoint(), getRightPoint())) {
           monitor.log(RefString.format("%s ~= %s", leftPoint.getPointRate(), rightX));
           return true;
         } else {
-          if (rightMean() > leftMean() && rightX > minRate) {
+          if (rightMean() > leftMean() && rightX > search.minRate) {
             rightX = rightX / 13;
-          } else if (rightPoint.derivative < initialDerivFactor * rightPoint.derivative && rightX < maxRate) {
+          } else if (rightPoint.derivative < search.initialDerivFactor * rightPoint.derivative && rightX < search.maxRate) {
             rightX = rightX * 7;
           } else {
             monitor.log(RefString.format("%s <= %s", rightMean(), leftMean()));
@@ -417,7 +420,7 @@ public class QuadraticSearch implements LineSearchStrategy {
 
         if (null != rightPoint) rightPoint.freeRef();
         rightPoint = cursor.step(rightX, monitor);
-        if (isSame(cursor.addRef(), monitor,
+        if (search.isSame(cursor.addRef(), monitor,
             prevRightPoint == null ? null : prevRightPoint.addRef(),
             getRightPoint()
         )) {
@@ -451,30 +454,30 @@ public class QuadraticSearch implements LineSearchStrategy {
       if (!isBracketed && thisX < 0) {
         thisX = rightX * 2;
       }
-      if (thisX < getMinRate())
-        thisX = getMinRate();
-      if (thisX > getMaxRate())
-        thisX = getMaxRate();
-      if (isSame(leftX, thisX, 1.0)) {
+      if (thisX < search.getMinRate())
+        thisX = search.getMinRate();
+      if (thisX > search.getMaxRate())
+        thisX = search.getMaxRate();
+      if (search.isSame(leftX, thisX, 1.0)) {
         monitor.log(RefString.format("Converged to left"));
-        return filter(cursor.addRef(), leftPoint.getPoint(), monitor);
-      } else if (isSame(thisX, rightX, 1.0)) {
+        return search.filter(cursor.addRef(), leftPoint.getPoint(), monitor);
+      } else if (search.isSame(thisX, rightX, 1.0)) {
         monitor.log(RefString.format("Converged to right"));
-        return filter(cursor.addRef(), rightPoint.getPoint(), monitor);
+        return search.filter(cursor.addRef(), rightPoint.getPoint(), monitor);
       } else {
         setThisPoint(cursor.step(thisX, monitor));
-        if (isSame(cursor.addRef(), monitor,
+        if (search.isSame(cursor.addRef(), monitor,
             getLeftPoint(),
             getThisPoint()
         )) {
           monitor.log(RefString.format("%s ~= %s", leftX, thisX));
-          return filter(cursor.addRef(), leftPoint.getPoint(), monitor);
-        } else if (isSame(cursor.addRef(), monitor,
+          return search.filter(cursor.addRef(), leftPoint.getPoint(), monitor);
+        } else if (search.isSame(cursor.addRef(), monitor,
             getThisPoint(),
             rightPoint.addRef()
         )) {
           monitor.log(RefString.format("%s ~= %s", thisX, rightX));
-          return filter(cursor.addRef(), rightPoint.getPoint(), monitor);
+          return search.filter(cursor.addRef(), rightPoint.getPoint(), monitor);
         } else {
           setThisPoint(cursor.step(thisX, monitor));
           boolean isLeft;
@@ -491,14 +494,14 @@ public class QuadraticSearch implements LineSearchStrategy {
               thisMean() - initialPoint.getPointMean()));
           if (loops++ > 10) {
             monitor.log(RefString.format("Loops = %s", loops));
-            return filter(cursor.addRef(), thisPoint.getPoint(), monitor);
-          } else if (isSame(cursor.addRef(), monitor, getLeftPoint(), rightPoint.addRef())) {
+            return search.filter(cursor.addRef(), thisPoint.getPoint(), monitor);
+          } else if (search.isSame(cursor.addRef(), monitor, getLeftPoint(), rightPoint.addRef())) {
             monitor.log(RefString.format("%s ~= %s", leftX, rightX));
-            return filter(cursor.addRef(), thisPoint.getPoint(), monitor);
+            return search.filter(cursor.addRef(), thisPoint.getPoint(), monitor);
           } else if (isLeft) {
             if (thisMean() > leftMean()) {
               monitor.log(RefString.format("%s > %s", thisMean(), leftMean()));
-              return filter(cursor.addRef(), leftPoint.getPoint(), monitor);
+              return search.filter(cursor.addRef(), leftPoint.getPoint(), monitor);
             } else {
               if (!isBracketed && leftMean() < rightMean()) {
                 rightX = leftX;
@@ -515,7 +518,7 @@ public class QuadraticSearch implements LineSearchStrategy {
           } else {
             if (thisMean() > rightMean()) {
               monitor.log(RefString.format("%s > %s", thisMean(), rightMean()));
-              return filter(cursor.addRef(), rightPoint.getPoint(), monitor);
+              return search.filter(cursor.addRef(), rightPoint.getPoint(), monitor);
             } else {
               if (!isBracketed && rightMean() < leftMean()) {
                 leftX = rightX;

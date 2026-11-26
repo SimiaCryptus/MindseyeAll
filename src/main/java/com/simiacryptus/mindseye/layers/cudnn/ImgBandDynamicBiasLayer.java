@@ -146,7 +146,7 @@ public class ImgBandDynamicBiasLayer extends LayerBase implements MultiPrecision
     }
     //   assert !right.isAlive();
     CudaTensorList data = fwd(bias.addRef(), inputData, inputDimensions, length);
-    Accumulator accumulator = new Accumulator(bias, biasInput.getAccumulator(), biasInput.isAlive(), input.getAccumulator(), input.isAlive());
+    Accumulator accumulator = new Accumulator(bias, biasInput.getAccumulator(), biasInput.isAlive(), input.getAccumulator(), input.isAlive(), precision);
     biasInput.freeRef();
     input.freeRef();
     boolean alive = alive(inObj);
@@ -225,9 +225,10 @@ public class ImgBandDynamicBiasLayer extends LayerBase implements MultiPrecision
     }, bias, inputData.addRef()), inputData);
   }
 
-  private class Accumulator extends Result.Accumulator {
+  private static class Accumulator extends Result.Accumulator {
 
     private final Tensor bias;
+    private final Precision precision;
     private Result.Accumulator biasinputAccumulator;
     private Result.Accumulator inputAccumulator;
     private boolean inputAlive;
@@ -241,13 +242,15 @@ public class ImgBandDynamicBiasLayer extends LayerBase implements MultiPrecision
      * @param biasinputAlive       the biasinput alive
      * @param inputAccumulator     the input accumulator
      * @param inputAlive           the input alive
+     * @param precision            the precision
      */
-    public Accumulator(Tensor bias, Result.Accumulator biasinputAccumulator, boolean biasinputAlive, Result.Accumulator inputAccumulator, boolean inputAlive) {
+    public Accumulator(Tensor bias, Result.Accumulator biasinputAccumulator, boolean biasinputAlive, Result.Accumulator inputAccumulator, boolean inputAlive, Precision precision) {
       this.bias = bias;
       this.biasinputAccumulator = biasinputAccumulator;
       this.inputAccumulator = inputAccumulator;
       this.inputAlive = inputAlive;
-      alive = biasinputAlive;
+      this.alive = biasinputAlive;
+      this.precision = precision;
     }
 
     @Override

@@ -130,7 +130,7 @@ public final class MonitoringSynapse extends LayerBase implements MonitoredItem 
       t.freeRef();
     });
     boolean alive = input.isAlive();
-    Result.Accumulator accumulator = new Accumulator(input.getAccumulator());
+    Result.Accumulator accumulator = new Accumulator(input.getAccumulator(), backpropStatistics);
     input.freeRef();
     return new Result(inputdata, accumulator, alive);
   }
@@ -162,17 +162,20 @@ public final class MonitoringSynapse extends LayerBase implements MonitoredItem 
     return (MonitoringSynapse) super.addRef();
   }
 
-  private class Accumulator extends Result.Accumulator {
+  private static class Accumulator extends Result.Accumulator {
 
+    private final ScalarStatistics backpropStatistics;
     private Result.Accumulator accumulator;
 
     /**
      * Instantiates a new Accumulator.
      *
-     * @param accumulator the accumulator
+     * @param accumulator        the accumulator
+     * @param backpropStatistics the backprop statistics
      */
-    public Accumulator(Result.Accumulator accumulator) {
+    public Accumulator(Result.Accumulator accumulator, ScalarStatistics backpropStatistics) {
       this.accumulator = accumulator;
+      this.backpropStatistics = backpropStatistics;
     }
 
     @Override
