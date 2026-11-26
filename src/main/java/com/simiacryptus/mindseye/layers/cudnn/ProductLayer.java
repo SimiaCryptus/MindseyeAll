@@ -144,7 +144,7 @@ public class ProductLayer extends LayerBase implements MultiPrecision {
     @Nonnull final int[] leftDimensions = leftData.getDimensions();
     @Nonnull final int[] rightDimensions = rightData.getDimensions();
     final int length = leftData.length();
-    if (3 != leftDimensions.length) {
+    if (leftDimensions.length < 1 || leftDimensions.length > 3 || rightDimensions.length < 1 || rightDimensions.length > 3) {
       left.freeRef();
       right.freeRef();
       leftData.freeRef();
@@ -217,10 +217,13 @@ public class ProductLayer extends LayerBase implements MultiPrecision {
     return CudaSystem.run(RefUtil.wrapInterface((RefFunction<CudnnHandle, CudaTensorList>) gpu -> {
           @Nonnull final CudaResource<cudnnOpTensorDescriptor> opDescriptor = gpu
               .newOpDescriptor(cudnnOpTensorOp.CUDNN_OP_TENSOR_MUL, precision);
+          int ld2 = leftDimensions.length < 3 ? 1 : leftDimensions[2];
+          int ld1 = leftDimensions.length < 2 ? 1 : leftDimensions[1];
+          int ld0 = leftDimensions.length < 1 ? 1 : leftDimensions[0];
           final CudaDevice.CudaTensorDescriptor outputDescriptor = gpu.newTensorDescriptor(precision, length,
-              leftDimensions[2], leftDimensions[1], leftDimensions[0],
-              leftDimensions[2] * leftDimensions[1] * leftDimensions[0], leftDimensions[1] * leftDimensions[0],
-              leftDimensions[0], 1);
+              ld2, ld1, ld0,
+              ld2 * ld1 * ld0, ld1 * ld0,
+              ld0, 1);
           @Nullable final CudaTensor lPtr = gpu.getTensor(leftData.addRef(), precision,
               MemoryType.Device, false);
           @Nullable final CudaTensor rPtr = gpu.getTensor(rightData.addRef(), precision,
@@ -300,10 +303,13 @@ public class ProductLayer extends LayerBase implements MultiPrecision {
             .run(RefUtil.wrapInterface((RefFunction<CudnnHandle, CudaTensorList>) gpu -> {
                   @Nonnull final CudaResource<cudnnOpTensorDescriptor> opDescriptor = gpu
                       .newOpDescriptor(cudnnOpTensorOp.CUDNN_OP_TENSOR_MUL, precision);
+                  int ld2 = leftDimensions.length < 3 ? 1 : leftDimensions[2];
+                  int ld1 = leftDimensions.length < 2 ? 1 : leftDimensions[1];
+                  int ld0 = leftDimensions.length < 1 ? 1 : leftDimensions[0];
                   final CudaDevice.CudaTensorDescriptor outputDescriptor = gpu.newTensorDescriptor(
-                      precision, length, leftDimensions[2], leftDimensions[1], leftDimensions[0],
-                      leftDimensions[2] * leftDimensions[1] * leftDimensions[0],
-                      leftDimensions[1] * leftDimensions[0], leftDimensions[0], 1);
+                      precision, length, ld2, ld1, ld0,
+                      ld2 * ld1 * ld0,
+                      ld1 * ld0, ld0, 1);
                   @Nullable final CudaTensor deltaTensor = gpu.getTensor(delta == null ? null : delta.addRef(),
                       precision, MemoryType.Device, false);
                   @Nullable final CudaTensor rightTensor = gpu.getTensor(rightData.addRef(), precision,
@@ -343,10 +349,13 @@ public class ProductLayer extends LayerBase implements MultiPrecision {
             .run(RefUtil.wrapInterface((RefFunction<CudnnHandle, CudaTensorList>) gpu -> {
                   @Nonnull final CudaResource<cudnnOpTensorDescriptor> opDescriptor = gpu
                       .newOpDescriptor(cudnnOpTensorOp.CUDNN_OP_TENSOR_MUL, precision);
+                  int ld2 = leftDimensions.length < 3 ? 1 : leftDimensions[2];
+                  int ld1 = leftDimensions.length < 2 ? 1 : leftDimensions[1];
+                  int ld0 = leftDimensions.length < 1 ? 1 : leftDimensions[0];
                   final CudaDevice.CudaTensorDescriptor expandedDescriptor = gpu.newTensorDescriptor(
-                      precision, length, leftDimensions[2], leftDimensions[1], leftDimensions[0],
-                      leftDimensions[2] * leftDimensions[1] * leftDimensions[0],
-                      leftDimensions[1] * leftDimensions[0], leftDimensions[0], 1);
+                      precision, length, ld2, ld1, ld0,
+                      ld2 * ld1 * ld0,
+                      ld1 * ld0, ld0, 1);
                   @Nullable final CudaTensor deltaTensor = gpu.getTensor(delta == null ? null : delta.addRef(),
                       precision, MemoryType.Device, false);
                   @Nullable final CudaTensor leftTensor = gpu.getTensor(leftData.addRef(), precision, MemoryType.Device,
@@ -378,10 +387,13 @@ public class ProductLayer extends LayerBase implements MultiPrecision {
                         new CudaTensor(outputPtr, expandedDescriptor, precision),
                         length, rightDimensions, precision);
                   } else {
+                    int rd2 = rightDimensions.length < 3 ? 1 : rightDimensions[2];
+                    int rd1 = rightDimensions.length < 2 ? 1 : rightDimensions[1];
+                    int rd0 = rightDimensions.length < 1 ? 1 : rightDimensions[0];
                     final CudaDevice.CudaTensorDescriptor reducedOutputDescriptor = gpu.newTensorDescriptor(
-                        precision, rightData.length(), rightDimensions[2], rightDimensions[1],
-                        rightDimensions[0], rightDimensions[2] * rightDimensions[1] * rightDimensions[0],
-                        rightDimensions[1] * rightDimensions[0], rightDimensions[0], 1);
+                        precision, rightData.length(), rd2, rd1,
+                        rd0, rd2 * rd1 * rd0,
+                        rd1 * rd0, rd0, 1);
                     long size = (long) precision.size * reducedOutputDescriptor.nStride * rightData.length();
                     @Nonnull final CudaMemory reducedOutputPtr = gpu.allocate(size, MemoryType.Managed.ifEnabled(),
                         true);

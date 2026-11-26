@@ -132,12 +132,13 @@ try {
 | Package | Responsibility |
 |---|---|
 | `com.simiacryptus.mindseye.lang` | Core primitives: `Layer`, `LayerBase`, `Tensor`, `TensorList`, `Result`, `Delta`, `DeltaSet`, `State`, `StateSet`, `CoreSettings` |
-| `com.simiacryptus.mindseye.lang.cudnn` | High-level GPU management: `CudaSystem`, `CudaDevice`, `CudnnHandle`, `CudaMemory`, `CudaTensor`, `CudaTensorList`, `CudaSettings`, `Precision` |
-| `com.simiacryptus.mindseye.lang.cudnn.ffm` | Java 22 FFM bindings to `libcudart` (`JCuda`) and `libcudnn` (`JCudnn`), `NativeLibraryLoader`, handles, descriptors, and enums |
+| `com.simiacryptus.mindseye.lang.cudnn` | High-level GPU management: `CudaSystem`, `CudaDevice`, `CudnnHandle`, `CudaMemory`, `CudaTensor`, `CudaTensorList`, `CudaSettings`, `Precision`, `GemmaCudaKernels` |
+| `com.simiacryptus.mindseye.lang.cudnn.ffm` | Java 22 FFM bindings to `libcudart` (`JCuda`), `libcudnn` (`JCudnn`), `libcublas` (`JCublas`), `libnvrtc` (`JNvrtc`), and `libcuda` (`JCudaDriver`) |
 | `com.simiacryptus.mindseye.network` | Computation graph containers: `DAGNetwork`, `PipelineNetwork`, `SimpleLossNetwork`, `SupervisedNetwork`, `DAGNode`, `GraphEvaluationContext` |
 | `com.simiacryptus.mindseye.layers` | Common/meta layers (`WrapperLayer`, `ValueLayer`, `PlaceholderLayer`, `MonitoringWrapperLayer`, `LoggingWrapperLayer`, `Explodable`) |
-| `com.simiacryptus.mindseye.layers.java` | Pure-Java CPU layers (activations, linear, pooling, loss, image ops, normalization, noise, reductions) |
-| `com.simiacryptus.mindseye.layers.cudnn` | cuDNN-accelerated GPU layers (activations, pooling, softmax, LRN, Gramian, image ops, reductions) |
+| `com.simiacryptus.mindseye.layers.java` | Pure-Java CPU layers (activations, linear projections, attention/RoPE/RMSNorm/embeddings, pooling, loss, image ops, noise, reductions) |
+| `com.simiacryptus.mindseye.models.gemma4` | Gemma 4 model family (`E2B`, `E4B`, `31B`, `26B-A4B` MoE): GGUF parser/quantizations, CPU & CUDA differentiable `DAGNetwork` builders (`GemmaMoELayer`, `CudaGemmaMoELayer`), tokenizer, chat format, and KV-cached generator |
+| `com.simiacryptus.mindseye.layers.cudnn` | CUDA/cuDNN/cuBLAS-accelerated GPU layers (activations, transformer/GQA/RoPE/RMSNorm/embeddings, pooling, softmax, LRN, Gramian, image ops, reductions) |
 | `com.simiacryptus.mindseye.layers.cudnn.conv` | cuDNN convolution and fully-connected layers (`ConvolutionLayer`, `SimpleConvolutionLayer`, `ExplodedConvolutionGrid`, `FullyConnectedLayer`) |
 | `com.simiacryptus.mindseye.eval` | `Trainable` adapters (`ArrayTrainable`, `SampledArrayTrainable`, `BatchedTrainable`, `CachedTrainable`, `L12Normalizer`) |
 | `com.simiacryptus.mindseye.opt` | Trainers (`IterativeTrainer`, `ValidatingTrainer`, `RoundRobinTrainer`) plus `orient`, `line`, and `region` subpackages |

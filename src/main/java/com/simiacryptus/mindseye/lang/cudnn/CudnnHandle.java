@@ -483,9 +483,12 @@ public class CudnnHandle extends CudaDevice {
     }
     @Nonnull final CudaResource<cudnnOpTensorDescriptor> opDescriptor = newOpDescriptor(cudnnOpTensorOp.CUDNN_OP_TENSOR_ADD,
         precision);
-    final CudaTensorDescriptor outputDescriptor = newTensorDescriptor(precision, length, dimensions[2],
-        dimensions[1], dimensions[0], dimensions[2] * dimensions[1] * dimensions[0], dimensions[1] * dimensions[0],
-        dimensions[0], 1);
+    int d2 = dimensions.length < 3 ? 1 : dimensions[2];
+    int d1 = dimensions.length < 2 ? 1 : dimensions[1];
+    int d0 = dimensions.length < 1 ? 1 : dimensions[0];
+    final CudaTensorDescriptor outputDescriptor = newTensorDescriptor(precision, length, d2,
+        d1, d0, d2 * d1 * d0, d1 * d0,
+        d0, 1);
     @Nullable final CudaTensor lPtr = getTensor(left.addRef(), precision, MemoryType.Device, false);//.moveTo(gpu.getDeviceNumber());
     left.freeRef();
     @Nullable final CudaTensor rPtr = getTensor(right.addRef(), precision, MemoryType.Device, false);//.moveTo(gpu.getDeviceNumber());

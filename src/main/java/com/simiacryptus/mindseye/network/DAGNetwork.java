@@ -724,17 +724,10 @@ public abstract class DAGNetwork extends LayerBase {
 
   private synchronized void initLinks(@Nonnull final Map<UUID, List<UUID>> nodeLinks,
                                       @Nonnull final RefMap<UUID, Layer> layersByNodeId, final UUID newNodeId) {
-    if (inputNodes.containsKey(newNodeId)) {
+    if (inputNodes.containsKey(newNodeId) || internalNodes.containsKey(newNodeId)) {
       layersByNodeId.freeRef();
       return;
     }
-    RefMap<UUID, Layer> layersById = getLayersById();
-    if (layersById.containsKey(newNodeId)) {
-      layersById.freeRef();
-      layersByNodeId.freeRef();
-      return;
-    }
-    layersById.freeRef();
     final Layer layer = layersByNodeId.get(newNodeId);
     if (layer == null) {
       layersByNodeId.freeRef();

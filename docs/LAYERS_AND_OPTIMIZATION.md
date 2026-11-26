@@ -16,18 +16,25 @@ This guide summarizes the neural network layers, `Trainable` adapters, trainers,
 | `Explodable` | Interface for layers that can expand into lower-level subgraphs |
 | `StochasticComponent` | Interface for layers with controllable RNG seeds (`shuffle(long)`) |
 
-### Pure-Java CPU Layers (`com.simiacryptus.mindseye.layers.java` — 73 classes)
+### Pure-Java CPU Layers (`com.simiacryptus.mindseye.layers.java` — 81 classes)
 
-- **Activations:** `ReLuActivationLayer`, `SigmoidActivationLayer`, `HyperbolicActivationLayer`, `SoftmaxLayer`, `LinearActivationLayer`, `SimpleActivationLayer`, `AbsActivationLayer`, `SqActivationLayer`, `NthPowerActivationLayer`, `LogActivationLayer`, `GaussianActivationLayer`, `SinewaveActivationLayer`, `BoundedActivationLayer`, `BinaryEntropyActivationLayer`
-- **Linear & Arithmetic:** `FullyConnectedLayer`, `FullyConnectedReferenceLayer`, `BiasLayer`, `ProductLayer`, `ProductInputsLayer`, `SumInputsLayer`, `CrossProductLayer`, `CrossDifferenceLayer`, `VariableLayer`, `TargetValueLayer`
+- **Activations:** `ReLuActivationLayer`, `GeluActivationLayer`, `SoftcapLayer`, `SigmoidActivationLayer`, `HyperbolicActivationLayer`, `SoftmaxLayer`, `LinearActivationLayer`, `ScalarScaleLayer`, `SimpleActivationLayer`, `AbsActivationLayer`, `SqActivationLayer`, `NthPowerActivationLayer`, `LogActivationLayer`, `GaussianActivationLayer`, `SinewaveActivationLayer`, `BoundedActivationLayer`, `BinaryEntropyActivationLayer`
+- **Linear, Sequence & Transformer Primitives:** `FullyConnectedLayer`, `FullyConnectedReferenceLayer`, `LinearProjectionLayer`, `TokenEmbeddingLayer`, `RmsNormLayer`, `RopeLayer`, `GroupedQueryAttentionLayer`, `ChunkSelectLayer`, `BiasLayer`, `ProductLayer`, `ProductInputsLayer`, `SumInputsLayer`, `CrossProductLayer`, `CrossDifferenceLayer`, `VariableLayer`, `TargetValueLayer`
+
+### Gemma 4 Model & GGUF Integration (`com.simiacryptus.mindseye.models.gemma4`)
+
+- **Model & Graph Construction:** `Gemma4Model` (`toNetwork()`, `toCudaNetwork()`, GGUF loader, KV-cached autoregressive inference, and CLI), `Gemma4Network` (`buildNetwork`, `buildCudaNetwork`, `buildFromEmbeddingsNetwork`, `buildCudaFromEmbeddingsNetwork` supporting dense GeGLU, SWA + full causal GQA, dual RoPE with `rope_freqs.weight`, `V=K`, shared KV layers, per-layer input embeddings, `GemmaMoELayer`, and GPU-accelerated `CudaGemmaMoELayer`), `Gemma4Config`, `Gemma4Weights`
+- **GGUF & Quantizations:** `GGUF` (v2/v3 parser and v3 binary builder), `GGMLType`, `GGUFTensor` (`F32`, `F16`, `BF16`, `Q4_0`, `Q4_1`, `Q5_1`, `Q4_K`, `Q5_K`, `Q6_K`, `Q8_0`, `MXFP4`)
+- **Tokenization, Chat & Sampling:** `GemmaTokenizer` (SentencePiece BPE + UTF-8 byte fallback), `GemmaChatFormat` (turn headers, system `<|think|>` turns, `<|channel>` thought stripping, FIM), `GemmaSampler` (`ARGMAX`, temperature categorical, `ToppSampler`)
 - **Loss & Entropy:** `MeanSqLossLayer`, `EntropyLossLayer`, `EntropyLayer`, `AutoEntropyLayer`, `StaticScalarLossLayer`
 - **Pooling, Reshaping & Concatenation:** `AvgPoolingLayer`, `MaxPoolingLayer`, `UnpoolingLayer`, `PhotoUnpoolingLayer`, `ReshapeLayer`, `TensorConcatLayer`, `SubBatchLayer`, `AssertDimensionsLayer`
 - **Image Operations:** `ImgBandBiasLayer`, `ImgBandScaleLayer`, `ImgBandSelectLayer`, `ImgConcatLayer`, `ImgCropLayer`, `ImgZeroPaddingLayer`, `ImgReshapeLayer`, `ImgPixelGateLayer`, `ImgPixelSoftmaxLayer`, `ImgPixelSumLayer`, `ImgTileSelectLayer`, `ImgTileAssemblyLayer`, `ImgTileSubnetLayer`, `AffineImgViewLayer`, `ImgIndexMapViewLayer`, `ImgViewLayerBase`, `MaxImageBandLayer`, `RescaledSubnetLayer`, `StochasticSamplingSubnetLayer`
 - **Reductions & Meta-Layers:** `SumReducerLayer`, `AvgReducerLayer`, `SignReducerLayer`, `SumMetaLayer`, `AvgMetaLayer`, `MaxMetaLayer`, `BiasMetaLayer`, `ScaleMetaLayer`, `StdDevMetaLayer`, `NormalizationMetaLayer`, `CrossDotMetaLayer`
 - **Normalization, Noise & Monitoring:** `L1NormalizationLayer`, `DropoutNoiseLayer`, `MaxDropoutNoiseLayer`, `GaussianNoiseLayer`, `BinaryNoiseLayer`, `MonitoringSynapse`
 
-### CUDA / cuDNN GPU Layers (`com.simiacryptus.mindseye.layers.cudnn` & `conv` — 44 classes)
+### CUDA / cuDNN / cuBLAS GPU Layers (`com.simiacryptus.mindseye.layers.cudnn` & `conv` — 53 classes)
 
+- **Transformer & Sequence Primitives (`layers.cudnn`):** `LinearProjectionLayer` (cuBLAS GEMM), `TokenEmbeddingLayer`, `RmsNormLayer` (learned & bare unit-RMS), `RopeLayer` (NeoX RoPE + `rope_freqs.weight`), `GroupedQueryAttentionLayer` (online-softmax FlashAttention-style GQA with causal & SWA), `ChunkSelectLayer`, `GeluActivationLayer`, `SoftcapLayer`, `ScalarScaleLayer` (plus `CudaGemmaMoELayer` in `models.gemma4`)
 - **Convolutions & Dense (`layers.cudnn.conv`):** `ConvolutionLayer`, `SimpleConvolutionLayer`, `ExplodedConvolutionGrid`, `ExplodedConvolutionLeg`, `ConvolutionParams`, `FullyConnectedLayer`
 - **Activations & Loss:** `ActivationLayer` (ReLU, Sigmoid, Tanh, Clipped ReLU, etc.), `SoftmaxActivationLayer`, `SquareActivationLayer`, `MeanSqLossLayer`
 - **Pooling & Normalization:** `PoolingLayer` (max/avg pooling), `LRNLayer` (local response normalization), `GramianLayer` (style/Gram matrix)

@@ -17,6 +17,7 @@
   3. `/usr/local/cuda/lib64/libcudnn.so.9`
   4. `libcudnn.so`, `/usr/local/cuda/lib64/libcudnn.so`
   5. `cudnn64_9.dll`, `cudnn` (Windows)
+- **`JCublas`**, **`JNvrtc`**, and **`JCudaDriver`** bind `libcublas` (`cublasSgemm_v2` / `cublasDgemm_v2`), `libnvrtc` (runtime CUDA C++ to PTX compilation), and `libcuda` (`cuModuleLoadData` / `cuLaunchKernel`) for transformer GEMMs, RMSNorm, RoPE, FlashAttention-style GQA, and MoE kernels (`GemmaCudaKernels`).
 - **Descriptors & Handles:** `NativeHandle`, `Pointer`, `cudaStream_t`, `cudnnHandle`, `cudnnTensorDescriptor`, `cudnnFilterDescriptor`, `cudnnConvolutionDescriptor`, `cudnnPoolingDescriptor`, `cudnnActivationDescriptor`, `cudnnLRNDescriptor`, `cudnnOpTensorDescriptor`, `cudnnReduceTensorDescriptor`, and matching constant enums mirror the cuDNN C API while remaining `@RefIgnore`d by the autocoder.
 
 ### Required JVM Flag
