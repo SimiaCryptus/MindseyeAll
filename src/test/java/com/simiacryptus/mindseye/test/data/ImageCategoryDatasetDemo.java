@@ -27,6 +27,7 @@ import com.simiacryptus.ref.wrappers.*;
 import com.simiacryptus.util.function.WeakCachedSupplier;
 import com.simiacryptus.util.test.LabeledObject;
 import com.simiacryptus.util.test.NotebookTestBase;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import javax.annotation.Nonnull;
@@ -36,6 +37,7 @@ import java.awt.image.BufferedImage;
 /**
  * The type Image category dataset demo.
  */
+@Tag("Report")
 public abstract class ImageCategoryDatasetDemo extends NotebookTestBase {
   @Nonnull
   @Override

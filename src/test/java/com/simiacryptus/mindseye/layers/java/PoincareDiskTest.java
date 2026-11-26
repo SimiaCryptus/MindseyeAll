@@ -26,6 +26,7 @@ import com.simiacryptus.mindseye.lang.Tensor;
 import com.simiacryptus.mindseye.lang.TensorList;
 import com.simiacryptus.mindseye.util.ImageUtil;
 import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import javax.imageio.ImageIO;
@@ -40,6 +41,7 @@ import static com.simiacryptus.math.Circle.UNIT_CIRCLE;
 public class PoincareDiskTest {
 
     @Test
+    @Tag("UnitTest")
     public void test() throws IOException {
         //new PoincareGeometry.Circle()
         Circle circle;
@@ -56,6 +58,7 @@ public class PoincareDiskTest {
     }
 
     @Test
+    @Tag("Manual")
     public void testPolygon() throws IOException {
         HyperbolicPolygon polygon = HyperbolicPolygon.regularPolygon(3, 20);
         Raster raster = new Raster(800, 800);
@@ -77,6 +80,7 @@ public class PoincareDiskTest {
     }
 
     @Test
+    @Tag("Manual")
     public void finishImage() throws IOException {
         BufferedImage image = ImageUtil.getImage("file:///C:/Users/andre/code/all-projects/report/HyperbolicTexture/bd074ae8-5e7d-48e2-a74f-a60aae1c474f/etc/image_8a5a91d97620a8e6.jpg");
         HyperbolicPolygon polygon = HyperbolicPolygon.regularPolygon(4,6);
@@ -88,6 +92,7 @@ public class PoincareDiskTest {
     }
 
     @Test
+    @Tag("Manual")
     public void finishImages() throws IOException {
         reprocess(new File("C:\\Users\\andre\\Downloads\\hyperb_fix_12_29"), HyperbolicPolygon.regularPolygon(6,8));
     }
@@ -140,6 +145,7 @@ public class PoincareDiskTest {
     }
 
     @Test
+    @Tag("Manual")
     public void testKlien() throws IOException {
         Raster raster = new Raster(1200, 1200);
         UnaryOperator<Point> transform = new HyperbolicTiling(HyperbolicPolygon.regularPolygon(4, 6)).expand(3).klien();
@@ -157,6 +163,7 @@ public class PoincareDiskTest {
     }
 
     @Test
+    @Tag("Manual")
     public void testSquare() throws IOException {
         Raster raster = new Raster(1200, 1200).setFilterCircle(false);
         UnaryOperator<Point> transform = new HyperbolicTiling(HyperbolicPolygon.regularPolygon(4, 6)).expand(3).square();

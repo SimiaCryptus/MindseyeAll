@@ -28,6 +28,7 @@ import com.simiacryptus.ref.lang.RefUtil;
 import com.simiacryptus.util.Util;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 
@@ -38,6 +39,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * The type Layer test base.
  */
+@Tag("LayerTest")
 public abstract class LayerTestBase extends LayerTests {
 
   /**

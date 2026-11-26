@@ -30,6 +30,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,6 +59,7 @@ public class MarkdownUtil {
    * Fix hugo markdown.
    */
   @Test
+  @Tag("Manual")
   public void fixHugoMarkdown() {
     Collection<File> mdFiles = FileUtils.listFiles(new File("H:\\SimiaCryptus\\scalaJS\\blog.simiacryptus.com\\content\\posts"),
         new IOFileFilter() {
