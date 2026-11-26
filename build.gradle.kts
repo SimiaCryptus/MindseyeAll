@@ -1,6 +1,7 @@
 plugins {
     `java-library`
     kotlin("jvm") version "2.1.20"
+    id("com.simiacryptus.refcount-autocoder")
 }
 
 group = "com.simiacryptus"
@@ -11,6 +12,7 @@ repositories {
 }
 
 dependencies {
+    api("com.simiacryptus:refcount-core:2.1.0")
     implementation("org.slf4j:slf4j-api:2.0.16")
     implementation("com.google.code.findbugs:jsr305:3.0.2")
     implementation("com.google.guava:guava:33.1.0-jre")
