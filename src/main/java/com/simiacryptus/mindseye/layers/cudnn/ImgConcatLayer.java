@@ -260,7 +260,7 @@ public class ImgConcatLayer extends LayerBase implements MultiPrecision {
           int dimension = data.getDimensions()[2];
           data.freeRef();
           return dimension;
-        }, RefUtil.addRef(inObj))).sum();
+        }, (Object[]) RefUtil.addRef(inObj))).sum();
         if (maxBands > 0)
           bandOffset = Math.min(bandOffset, maxBands);
         int inputBands = inputDimensions[2];
@@ -367,7 +367,7 @@ public class ImgConcatLayer extends LayerBase implements MultiPrecision {
         assert inputDimentions[1] == outputDimensions[1];
         int bandOffset = RefIntStream.range(0, i).map(RefUtil.wrapInterface(j -> {
           return getDimensions(getTensorList(inObj[j].addRef()))[2];
-        }, RefUtil.addRef(inObj))).sum();
+        }, (Object[]) RefUtil.addRef(inObj))).sum();
         int inputBands = maxBands <= 0 ? inputDimentions[2]
             : Math.min(inputDimentions[2], maxBands - bandOffset);
         if (inputBands > 0 && input.isAlive()) {

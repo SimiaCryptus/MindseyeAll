@@ -73,6 +73,8 @@ tasks.jacocoTestReport {
 tasks.register<Test>("layerTests") {
     description = "Runs intensive layer tests."
     group = "verification"
+    maxHeapSize = "16g"
+    forkEvery = 10
     testClassesDirs = sourceSets.test.get().output.classesDirs
     classpath = sourceSets.test.get().runtimeClasspath
     useJUnitPlatform {

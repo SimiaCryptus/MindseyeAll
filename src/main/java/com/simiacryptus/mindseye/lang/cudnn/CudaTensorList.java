@@ -509,7 +509,7 @@ public class CudaTensorList extends ReferenceCountingBase implements TensorList,
                     gpu.freeRef();
                     return new TensorArray(RefUtil.addRef(output));
                   }, this.addRef()
-              ), output));
+              ), (Object[]) output));
       TensorArray result = timedResult.getResult();
       if (CudaTensorList.logger.isDebugEnabled()) {
         CudaTensorList.logger.debug(RefString.format(

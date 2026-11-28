@@ -494,6 +494,7 @@ public class CudaDevice extends CudaSystem {
   }
 
   @Nonnull
+  @SuppressWarnings("removal")
   private CudaPointer _acquire(long size, @Nonnull MemoryType type, int retries) {
     synchronized (allocationLock) {
       final DeviceMetrics metrics = ensureCapacity(size);

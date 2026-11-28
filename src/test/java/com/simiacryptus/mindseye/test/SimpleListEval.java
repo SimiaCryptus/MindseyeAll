@@ -206,7 +206,7 @@ public class SimpleListEval extends ReferenceCountingBase implements Callable<Si
             }
           };
           return new Result(inputCopy[i].addRef(), accumulator, true);
-        }, inputCopy)).toArray(Result[]::new);
+        }, (Object[]) inputCopy)).toArray(Result[]::new);
     @Nullable final Result eval = layer.eval(inputs);
     TensorList data = eval.getData();
     TensorList outputData = data.copy();

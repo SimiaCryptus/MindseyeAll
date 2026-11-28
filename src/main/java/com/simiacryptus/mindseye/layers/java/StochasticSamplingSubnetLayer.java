@@ -147,7 +147,7 @@ public class StochasticSamplingSubnetLayer extends LayerBase implements Stochast
           shuffleSubnet(seed1);
           assert subnetwork != null;
           return subnetwork.eval(RefUtil.addRef(counting));
-        }, counting)).toArray(Result[]::new));
+        }, (Object[]) counting)).toArray(Result[]::new));
   }
 
   /**

@@ -311,7 +311,7 @@ public class ImgTileAssemblyLayer extends LayerBase {
           }
 
           return outputData;
-        }, inObj)).toArray(Tensor[]::new));
+        }, (Object[]) inObj)).toArray(Tensor[]::new));
   }
 
   private int getInt(@Nonnull JsonObject json, String paddingX, int defaultValue) {

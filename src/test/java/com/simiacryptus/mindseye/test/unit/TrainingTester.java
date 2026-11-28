@@ -757,7 +757,7 @@ public abstract class TrainingTester extends ComponentTestBase<TrainingTester.Co
             randomizationMode.shuffle(random, cpy.getData());
             return cpy;
           }).toArray(Tensor[]::new);
-        }, copy)).toArray(Tensor[][]::new);
+        }, (Object[]) copy)).toArray(Tensor[][]::new);
   }
 
   private List<StepRecord> train(@Nonnull NotebookOutput log,

@@ -150,7 +150,7 @@ public class MeanSqLossLayer extends LayerBase {
               Tensor tensor = new Tensor(new double[]{r.sumSq() / r.length()}, 1);
               RefUtil.set(diffs, dataIndex, r);
               return tensor;
-            }, inObj)
+            }, (Object[]) inObj)
         ).toArray(Tensor[]::new));
   }
 

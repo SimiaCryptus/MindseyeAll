@@ -108,7 +108,7 @@ public class SampledArrayTrainable extends TrainableWrapper<ArrayTrainable>
     }
     this.trainingData = RefArrays.stream(trainingData).map(obj -> {
       return RefUtil.wrapInterface((RefSupplier<Tensor[]>) new WeakCachedSupplier<Tensor[]>(
-          () -> RefUtil.addRef(obj)), obj);
+          () -> RefUtil.addRef(obj)), (Object[]) obj);
     }).collect(RefCollectors.toList());
     this.trainingSize = trainingSize;
     reseed(RefSystem.nanoTime());

@@ -172,6 +172,7 @@ public abstract class HtmlQuery<T> {
   }
 
   @Override
+  @SuppressWarnings("removal")
   protected void finalize() throws Throwable {
     handler_get.close();
     handler_post.close();

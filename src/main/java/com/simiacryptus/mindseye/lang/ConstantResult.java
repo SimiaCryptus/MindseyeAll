@@ -92,7 +92,7 @@ public final class ConstantResult extends Result {
                     RefIntStream.range(0, input.length)
                         .mapToObj(y -> input[y][x].addRef())
                         .toArray(Tensor[]::new),
-                input))
+                (Object[]) input))
         .map(TensorArray::new)
         .map(ConstantResult::new)
         .toArray(Result[]::new);

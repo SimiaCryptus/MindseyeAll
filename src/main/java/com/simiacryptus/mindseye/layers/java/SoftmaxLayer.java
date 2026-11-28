@@ -144,7 +144,7 @@ public class SoftmaxLayer extends LayerBase {
           Tensor temp_08_0003 = exp.map(x -> x / sum);
           RefUtil.set(exp_out, dataIndex, exp);
           return temp_08_0003;
-        }, inObj)).toArray(Tensor[]::new);
+        }, (Object[]) inObj)).toArray(Tensor[]::new);
     assert RefArrays.stream(RefUtil.addRef(outputA)).flatMapToDouble(x -> {
       RefDoubleStream temp_08_0005 = RefArrays.stream(x.getData());
       x.freeRef();

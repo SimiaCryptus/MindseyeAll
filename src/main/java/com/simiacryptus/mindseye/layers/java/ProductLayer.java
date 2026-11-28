@@ -143,7 +143,7 @@ public class ProductLayer extends LayerBase {
           }
           sum_out[dataIndex] = sum;
           return new Tensor(new double[]{sum}, 1);
-        }, inObj)).toArray(Tensor[]::new);
+        }, (Object[]) inObj)).toArray(Tensor[]::new);
     return new TensorArray(outputA);
   }
 

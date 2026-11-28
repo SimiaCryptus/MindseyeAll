@@ -227,7 +227,7 @@ public final class MonitoringWrapperLayer extends WrapperLayer implements Monito
     @Nonnull
     TimedResult<Result> timedResult = TimedResult.time(RefUtil.wrapInterface((UncheckedSupplier<Result>) () -> {
       return inner.eval(RefUtil.addRef(wrappedInput));
-    }, wrappedInput));
+    }, (Object[]) wrappedInput));
     final Result output = timedResult.getResult();
     forwardPerformance.add(timedResult.timeNanos / 1000000000.0);
     timedResult.freeRef();

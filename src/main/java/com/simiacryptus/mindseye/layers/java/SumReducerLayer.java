@@ -127,7 +127,7 @@ public class SumReducerLayer extends LayerBase {
             }
           }
           return sum;
-        }, inObj)).mapToObj(x -> new Tensor(new double[]{x}, new int[]{1}))
+        }, (Object[]) inObj)).mapToObj(x -> new Tensor(new double[]{x}, new int[]{1}))
         .toArray(Tensor[]::new));
   }
 
