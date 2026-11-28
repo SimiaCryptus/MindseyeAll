@@ -220,9 +220,11 @@ public class StateSet<K> extends DoubleBufferSet<K, State<K>> {
   @Override
   public StateSet<K> copy() {
     return map(x -> {
-      State<K> temp_41_0010 = x.copy();
-      x.freeRef();
-      return temp_41_0010;
+      try {
+        return x.copy();
+      } finally {
+        x.freeRef();
+      }
     });
   }
 
@@ -258,22 +260,25 @@ public class StateSet<K> extends DoubleBufferSet<K, State<K>> {
   @Nonnull
   @Override
   public StateSet<K> map(@Nonnull final RefFunction<State<K>, State<K>> mapper) {
-    RefHashSet<Map.Entry<K, State<K>>> temp_41_0026 = map.entrySet();
-    RefStream<Map.Entry<K, State<K>>> stream = temp_41_0026.stream();
-    if (map.size() > 100) {
-      stream = stream.parallel();
+    RefHashSet<Map.Entry<K, State<K>>> entries = map.entrySet();
+    final RefMap<K, State<K>> newMap = map.size() > 100 ? new RefConcurrentHashMap<>() : new RefHashMap<>();
+    try (RefStream<Map.Entry<K, State<K>>> stream = map.size() > 100 ? entries.stream().parallel() : entries.stream()) {
+      stream.forEach(e -> {
+        try {
+          K key = e.getKey();
+          State<K> val = mapper.apply(e.getValue());
+          RefUtil.freeRef(newMap.put(key, val));
+        } finally {
+          RefUtil.freeRef(e);
+        }
+      });
+      return new StateSet<>(newMap);
+    } catch (Throwable t) {
+      newMap.freeRef();
+      throw t;
+    } finally {
+      entries.freeRef();
     }
-    final RefMap<K, State<K>> newMap = stream.collect(RefCollectors.toMap(e -> {
-      K temp_41_0011 = e.getKey();
-      RefUtil.freeRef(e);
-      return temp_41_0011;
-    }, e -> {
-      State<K> temp_41_0012 = mapper.apply(e.getValue());
-      RefUtil.freeRef(e);
-      return temp_41_0012;
-    }));
-    temp_41_0026.freeRef();
-    return new StateSet<>(newMap);
   }
 
   /**

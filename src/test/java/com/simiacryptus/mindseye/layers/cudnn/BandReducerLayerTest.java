@@ -25,6 +25,7 @@ import com.simiacryptus.mindseye.test.unit.SingleDerivativeTester;
 import com.simiacryptus.ref.lang.RefUtil;
 
 import javax.annotation.Nonnull;
+import java.util.Random;
 
 /**
  * The type Band reducer layer test.
@@ -65,6 +66,11 @@ public abstract class BandReducerLayerTest extends CudnnLayerTestBase {
     temp_66_0003.freeRef();
     temp_66_0002.freeRef();
     return temp_66_0001;
+  }
+
+  @Override
+  protected double random(@Nonnull Random random) {
+    return 4.0 * (random.nextDouble() - 0.5);
   }
 
   @Nonnull

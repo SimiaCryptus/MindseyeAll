@@ -173,9 +173,17 @@ public final class PointSample extends ReferenceCountingBase {
    */
   @Nonnull
   public PointSample copyFull() {
+    DeltaSet<UUID> deltaCopy = delta.copy();
+    StateSet<UUID> weightsCopy;
+    try {
+      weightsCopy = weights.copy();
+    } catch (Throwable t) {
+      deltaCopy.freeRef();
+      throw t;
+    }
     return new PointSample(
-        delta.copy(),
-        weights.copy(),
+        deltaCopy,
+        weightsCopy,
         sum, rate, count);
   }
 
