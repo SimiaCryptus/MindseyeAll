@@ -750,7 +750,7 @@ public class MarkdownNotebookOutput implements NotebookOutput {
         CharSequence toJson;
         String escape1;
         try {
-          toJson = JsonUtil.toJson(eval);
+          toJson = JsonUtil.toJson(RefUtil.addRef(eval));
           escape1 = "json";
         } catch (Throwable e) {
           toJson = eval.toString();

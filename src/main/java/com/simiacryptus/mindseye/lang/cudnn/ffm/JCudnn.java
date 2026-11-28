@@ -119,6 +119,12 @@ public final class JCudnn {
         FunctionDescriptor.of(JAVA_INT, ADDRESS, ADDRESS, ADDRESS, ADDRESS, ADDRESS, JAVA_INT, ADDRESS, ADDRESS));
     static final MethodHandle cudnnFindConvolutionBackwardFilterAlgorithm = NativeLibraryLoader.downcall(LIB, "cudnnFindConvolutionBackwardFilterAlgorithm",
         FunctionDescriptor.of(JAVA_INT, ADDRESS, ADDRESS, ADDRESS, ADDRESS, ADDRESS, JAVA_INT, ADDRESS, ADDRESS));
+    static final MethodHandle cudnnGetConvolutionForwardAlgorithm_v7 = NativeLibraryLoader.downcall(LIB, "cudnnGetConvolutionForwardAlgorithm_v7",
+        FunctionDescriptor.of(JAVA_INT, ADDRESS, ADDRESS, ADDRESS, ADDRESS, ADDRESS, JAVA_INT, ADDRESS, ADDRESS));
+    static final MethodHandle cudnnGetConvolutionBackwardDataAlgorithm_v7 = NativeLibraryLoader.downcall(LIB, "cudnnGetConvolutionBackwardDataAlgorithm_v7",
+        FunctionDescriptor.of(JAVA_INT, ADDRESS, ADDRESS, ADDRESS, ADDRESS, ADDRESS, JAVA_INT, ADDRESS, ADDRESS));
+    static final MethodHandle cudnnGetConvolutionBackwardFilterAlgorithm_v7 = NativeLibraryLoader.downcall(LIB, "cudnnGetConvolutionBackwardFilterAlgorithm_v7",
+        FunctionDescriptor.of(JAVA_INT, ADDRESS, ADDRESS, ADDRESS, ADDRESS, ADDRESS, JAVA_INT, ADDRESS, ADDRESS));
 
     // Tensor & elementwise ops
     static final MethodHandle cudnnSetTensor = NativeLibraryLoader.downcall(LIB, "cudnnSetTensor",
@@ -531,6 +537,99 @@ public final class JCudnn {
       long stride = cudnnConvolutionBwdFilterAlgoPerf.LAYOUT.byteSize();
       MemorySegment perfBuf = arena.allocate(cudnnConvolutionBwdFilterAlgoPerf.LAYOUT, requestedAlgoCount);
       int status = (int) Native.cudnnFindConvolutionBackwardFilterAlgorithm.invokeExact(
+          NativeHandle.handleOrNull(handle), NativeHandle.handleOrNull(xDesc),
+          NativeHandle.handleOrNull(dyDesc), NativeHandle.handleOrNull(convDesc),
+          NativeHandle.handleOrNull(dwDesc), requestedAlgoCount, countOut, perfBuf);
+      int count = countOut.get(JAVA_INT, 0);
+      returnedAlgoCount[0] = count;
+      if (status == cudnnStatus.CUDNN_STATUS_SUCCESS) {
+        int n = Math.min(count, perfResults.length);
+        for (int i = 0; i < n; i++) {
+          if (perfResults[i] == null) perfResults[i] = new cudnnConvolutionBwdFilterAlgoPerf();
+          perfResults[i].readFrom(perfBuf, (long) i * stride);
+        }
+      }
+      return check(status);
+    } catch (Throwable t) {
+      throw propagate(t);
+    }
+  }
+
+  public static int cudnnGetConvolutionForwardAlgorithm_v7(cudnnHandle handle,
+                                                           cudnnTensorDescriptor xDesc,
+                                                           cudnnFilterDescriptor wDesc,
+                                                           cudnnConvolutionDescriptor convDesc,
+                                                           cudnnTensorDescriptor yDesc,
+                                                           int requestedAlgoCount,
+                                                           int[] returnedAlgoCount,
+                                                           cudnnConvolutionFwdAlgoPerf[] perfResults) {
+    try (Arena arena = Arena.ofConfined()) {
+      MemorySegment countOut = arena.allocate(JAVA_INT);
+      long stride = cudnnConvolutionFwdAlgoPerf.LAYOUT.byteSize();
+      MemorySegment perfBuf = arena.allocate(cudnnConvolutionFwdAlgoPerf.LAYOUT, requestedAlgoCount);
+      int status = (int) Native.cudnnGetConvolutionForwardAlgorithm_v7.invokeExact(
+          NativeHandle.handleOrNull(handle), NativeHandle.handleOrNull(xDesc),
+          NativeHandle.handleOrNull(wDesc), NativeHandle.handleOrNull(convDesc),
+          NativeHandle.handleOrNull(yDesc), requestedAlgoCount, countOut, perfBuf);
+      int count = countOut.get(JAVA_INT, 0);
+      returnedAlgoCount[0] = count;
+      if (status == cudnnStatus.CUDNN_STATUS_SUCCESS) {
+        int n = Math.min(count, perfResults.length);
+        for (int i = 0; i < n; i++) {
+          if (perfResults[i] == null) perfResults[i] = new cudnnConvolutionFwdAlgoPerf();
+          perfResults[i].readFrom(perfBuf, (long) i * stride);
+        }
+      }
+      return check(status);
+    } catch (Throwable t) {
+      throw propagate(t);
+    }
+  }
+
+  public static int cudnnGetConvolutionBackwardDataAlgorithm_v7(cudnnHandle handle,
+                                                                cudnnFilterDescriptor wDesc,
+                                                                cudnnTensorDescriptor dyDesc,
+                                                                cudnnConvolutionDescriptor convDesc,
+                                                                cudnnTensorDescriptor dxDesc,
+                                                                int requestedAlgoCount,
+                                                                int[] returnedAlgoCount,
+                                                                cudnnConvolutionBwdDataAlgoPerf[] perfResults) {
+    try (Arena arena = Arena.ofConfined()) {
+      MemorySegment countOut = arena.allocate(JAVA_INT);
+      long stride = cudnnConvolutionBwdDataAlgoPerf.LAYOUT.byteSize();
+      MemorySegment perfBuf = arena.allocate(cudnnConvolutionBwdDataAlgoPerf.LAYOUT, requestedAlgoCount);
+      int status = (int) Native.cudnnGetConvolutionBackwardDataAlgorithm_v7.invokeExact(
+          NativeHandle.handleOrNull(handle), NativeHandle.handleOrNull(wDesc),
+          NativeHandle.handleOrNull(dyDesc), NativeHandle.handleOrNull(convDesc),
+          NativeHandle.handleOrNull(dxDesc), requestedAlgoCount, countOut, perfBuf);
+      int count = countOut.get(JAVA_INT, 0);
+      returnedAlgoCount[0] = count;
+      if (status == cudnnStatus.CUDNN_STATUS_SUCCESS) {
+        int n = Math.min(count, perfResults.length);
+        for (int i = 0; i < n; i++) {
+          if (perfResults[i] == null) perfResults[i] = new cudnnConvolutionBwdDataAlgoPerf();
+          perfResults[i].readFrom(perfBuf, (long) i * stride);
+        }
+      }
+      return check(status);
+    } catch (Throwable t) {
+      throw propagate(t);
+    }
+  }
+
+  public static int cudnnGetConvolutionBackwardFilterAlgorithm_v7(cudnnHandle handle,
+                                                                  cudnnTensorDescriptor xDesc,
+                                                                  cudnnTensorDescriptor dyDesc,
+                                                                  cudnnConvolutionDescriptor convDesc,
+                                                                  cudnnFilterDescriptor dwDesc,
+                                                                  int requestedAlgoCount,
+                                                                  int[] returnedAlgoCount,
+                                                                  cudnnConvolutionBwdFilterAlgoPerf[] perfResults) {
+    try (Arena arena = Arena.ofConfined()) {
+      MemorySegment countOut = arena.allocate(JAVA_INT);
+      long stride = cudnnConvolutionBwdFilterAlgoPerf.LAYOUT.byteSize();
+      MemorySegment perfBuf = arena.allocate(cudnnConvolutionBwdFilterAlgoPerf.LAYOUT, requestedAlgoCount);
+      int status = (int) Native.cudnnGetConvolutionBackwardFilterAlgorithm_v7.invokeExact(
           NativeHandle.handleOrNull(handle), NativeHandle.handleOrNull(xDesc),
           NativeHandle.handleOrNull(dyDesc), NativeHandle.handleOrNull(convDesc),
           NativeHandle.handleOrNull(dwDesc), requestedAlgoCount, countOut, perfBuf);

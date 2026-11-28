@@ -210,9 +210,11 @@ public class DeltaSet<K> extends DoubleBufferSet<K, Delta<K>> {
   @Nonnull
   public DeltaSet<K> scale(final double f) {
     return map(x -> {
-      Delta<K> temp_37_0007 = x.scale(f);
-      x.freeRef();
-      return temp_37_0007;
+      try {
+        return x.scale(f);
+      } finally {
+        x.freeRef();
+      }
     });
   }
 

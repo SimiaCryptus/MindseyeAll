@@ -102,34 +102,40 @@ public abstract class BatchedTrainable extends TrainableWrapper<DataTrainable> i
             final int batches = (int) Math.ceil(size * 1.0 / batchSize);
             final int evenBatchSize = (int) Math.ceil(size * 1.0 / batches);
             @Nonnull final RefList<RefList<Tensor[]>> collection = RefLists.partition(tensors.addRef(), evenBatchSize);
-            PointSample temp_36_0001 = RefUtil.get(collection.stream()
-                .map(RefUtil.wrapInterface((Function<RefList<Tensor[]>, PointSample>) trainingData -> {
-                  if (batchSize < trainingData.size()) {
+            try {
+              return RefUtil.get(collection.stream()
+                  .map(RefUtil.wrapInterface((Function<RefList<Tensor[]>, PointSample>) trainingData -> {
+                    if (batchSize < trainingData.size()) {
+                      trainingData.freeRef();
+                      throw new RuntimeException();
+                    }
+                    assert inner != null;
+                    inner.setData(trainingData.addRef());
                     trainingData.freeRef();
-                    throw new RuntimeException();
-                  }
-                  assert inner != null;
-                  inner.setData(trainingData.addRef());
-                  trainingData.freeRef();
-                  PointSample measure = super.measure(monitor);
-                  inner.setData(new RefArrayList<>());
-                  return measure;
-                }, inner)).reduce((a, b) -> {
-                  PointSample temp_36_0002 = a.add(b == null ? null : b.addRef());
-                  if (null != b)
-                    b.freeRef();
-                  a.freeRef();
-                  return temp_36_0002;
-                }));
-            collection.freeRef();
-            return temp_36_0001;
+                    try {
+                      return super.measure(monitor);
+                    } finally {
+                      inner.setData(new RefArrayList<>());
+                    }
+                  }, inner)).reduce((a, b) -> {
+                    PointSample temp_36_0002 = a.add(b == null ? null : b.addRef());
+                    if (null != b)
+                      b.freeRef();
+                    a.freeRef();
+                    return temp_36_0002;
+                  }));
+            } finally {
+              collection.freeRef();
+            }
           } else {
             assert inner != null;
             inner.setData(tensors.addRef());
-            PointSample measure = super.measure(monitor);
-            inner.setData(new RefArrayList<>());
-            inner.freeRef();
-            return measure;
+            try {
+              return super.measure(monitor);
+            } finally {
+              inner.setData(new RefArrayList<>());
+              inner.freeRef();
+            }
           }
         }, tensors));
     PointSample result = timedResult.getResult();

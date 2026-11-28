@@ -795,13 +795,8 @@ public abstract class TrainingTester extends ComponentTestBase<TrainingTester.Co
       if (0 < mask.length) {
         log.p("And regressed input:");
         log.eval(RefUtil.wrapInterface((UncheckedSupplier<String>) () -> {
-          return RefArrays.stream(RefUtil.addRef(data)).flatMap(x -> {
-            return RefArrays.stream(x);
-          }).limit(1).map(x -> {
-            String temp_18_0015 = x.prettyPrint();
-            x.freeRef();
-            return temp_18_0015;
-          }).reduce((a, b) -> a + "\n" + b).orElse("");
+          Tensor first = data.length > 0 && data[0].length > 0 ? data[0][0] : null;
+          return first == null ? "" : first.prettyPrint();
         }, RefUtil.addRef(data)));
       }
       log.p("To produce the following output:");
@@ -811,11 +806,12 @@ public abstract class TrainingTester extends ComponentTestBase<TrainingTester.Co
         Result eval = layer.eval(array);
         assert eval != null;
         TensorList tensorList = Result.getData(eval);
-        String temp_18_0016 = tensorList.stream().limit(1).map(x -> {
-          String temp_18_0017 = x.prettyPrint();
-          x.freeRef();
-          return temp_18_0017;
-        }).reduce((a, b) -> a + "\n" + b).orElse("");
+        String temp_18_0016 = "";
+        if (tensorList.length() > 0) {
+          Tensor first = tensorList.get(0);
+          temp_18_0016 = first.prettyPrint();
+          first.freeRef();
+        }
         tensorList.freeRef();
         return temp_18_0016;
       }, data, layer));

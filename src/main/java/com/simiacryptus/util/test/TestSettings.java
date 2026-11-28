@@ -30,8 +30,7 @@ public class TestSettings implements Settings {
   public static final TestSettings INSTANCE = new TestSettings();
   public final String tag = get("GIT_TAG", "master");
   public final String testRepo = get("TEST_REPO", "build/reports/mindseye");
-  public final URI testArchive = get("TEST_ARCHIVE", Util.getURI("s3://code.simiacrypt.us/tests/"));
-  //  public final URI testArchive = get("TEST_ARCHIVE", (URI) null);
+  public final URI testArchive = get("TEST_ARCHIVE", (URI) null);
   public boolean isInteractive = false;
 
   private TestSettings() {

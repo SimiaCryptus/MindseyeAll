@@ -40,10 +40,12 @@ dependencies {
 }
 
 tasks.withType<Test> {
+    maxHeapSize = "4g"
     jvmArgs("--enable-native-access=ALL-UNNAMED")
     if (System.getProperty("TEST_REPO") == null) {
         systemProperty("TEST_REPO", layout.buildDirectory.dir("reports/mindseye").get().asFile.absolutePath)
     }
+    System.getProperty("DEBUG_LIFECYCLE")?.let { systemProperty("DEBUG_LIFECYCLE", it) }
     val cudaLibDirs = listOf("/usr/local/cuda-12.6/lib64", "/usr/local/cuda/lib64")
         .filter { file(it).isDirectory }
     if (cudaLibDirs.isNotEmpty()) {

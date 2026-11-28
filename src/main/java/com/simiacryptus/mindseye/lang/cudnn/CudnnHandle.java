@@ -1009,15 +1009,28 @@ public class CudnnHandle extends CudaDevice {
   public int getBackwardDataAlgorithm(final cudnnTensorDescriptor dyDesc, final cudnnFilterDescriptor filterDesc,
                                       final cudnnConvolutionDescriptor convDesc, final cudnnTensorDescriptor dxDesc, final long memoryLimitInBytes) {
     long startTime = RefSystem.nanoTime();
-    @Nonnull final int algoArray[] = {-1};
-    cudnnConvolutionBwdDataAlgoPerf[] perf = {new cudnnConvolutionBwdDataAlgoPerf()};
-    final int result = JCudnn.cudnnFindConvolutionBackwardDataAlgorithm(handle, filterDesc, dyDesc, convDesc, dxDesc,
-        1, algoArray, perf);
+    final int maxAlgos = 8;
+    @Nonnull final int[] returnedCount = {0};
+    cudnnConvolutionBwdDataAlgoPerf[] perfs = new cudnnConvolutionBwdDataAlgoPerf[maxAlgos];
+    final int result = JCudnn.cudnnGetConvolutionBackwardDataAlgorithm_v7(handle, filterDesc, dyDesc, convDesc, dxDesc,
+        maxAlgos, returnedCount, perfs);
     getBackwardDataAlgorithm_execution.accept((RefSystem.nanoTime() - startTime) / 1e9);
-    log("cudnnGetConvolutionBackwardDataAlgorithm", result, new Object[]{this.addRef(), filterDesc, dyDesc, convDesc, dxDesc,
-            1, algoArray, perf});
+    log("cudnnGetConvolutionBackwardDataAlgorithm_v7", result, new Object[]{this.addRef(), filterDesc, dyDesc, convDesc, dxDesc,
+        maxAlgos, returnedCount, perfs});
     CudaSystem.handle(result);
-    return algoArray[0];
+    int n = Math.min(returnedCount[0], perfs.length);
+    for (int i = 0; i < n; i++) {
+      if (perfs[i] != null && perfs[i].status == cudnnStatus.CUDNN_STATUS_SUCCESS
+          && (memoryLimitInBytes <= 0 || perfs[i].memory <= memoryLimitInBytes)) {
+        return perfs[i].algo;
+      }
+    }
+    for (int i = 0; i < n; i++) {
+      if (perfs[i] != null && perfs[i].status == cudnnStatus.CUDNN_STATUS_SUCCESS) {
+        return perfs[i].algo;
+      }
+    }
+    return n > 0 && perfs[0] != null ? perfs[0].algo : cudnnConvolutionBwdDataAlgo.CUDNN_CONVOLUTION_BWD_DATA_ALGO_0;
   }
 
   /**
@@ -1034,16 +1047,29 @@ public class CudnnHandle extends CudaDevice {
                                         final cudnnConvolutionDescriptor convDesc, final cudnnTensorDescriptor outputDesc,
                                         final long memoryLimitInBytes) {
     long startTime = RefSystem.nanoTime();
-    @Nonnull final int algoArray[] = {-1};
-    cudnnConvolutionBwdFilterAlgoPerf[] perfResults = { new cudnnConvolutionBwdFilterAlgoPerf() };
-    final int result = JCudnn.cudnnFindConvolutionBackwardFilterAlgorithm(handle, inputDesc, outputDesc, convDesc,
-        filterDesc, 1, algoArray, perfResults);
+    final int maxAlgos = 8;
+    @Nonnull final int[] returnedCount = {0};
+    cudnnConvolutionBwdFilterAlgoPerf[] perfs = new cudnnConvolutionBwdFilterAlgoPerf[maxAlgos];
+    final int result = JCudnn.cudnnGetConvolutionBackwardFilterAlgorithm_v7(handle, inputDesc, outputDesc, convDesc,
+        filterDesc, maxAlgos, returnedCount, perfs);
     getBackwardFilterAlgorithm_execution.accept((RefSystem.nanoTime() - startTime) / 1e9);
-    log("cudnnGetConvolutionBackwardFilterAlgorithm", result,
+    log("cudnnGetConvolutionBackwardFilterAlgorithm_v7", result,
         new Object[]{this.addRef(), inputDesc, outputDesc, convDesc, filterDesc,
-                1, algoArray, perfResults});
+            maxAlgos, returnedCount, perfs});
     CudaSystem.handle(result);
-    return algoArray[0];
+    int n = Math.min(returnedCount[0], perfs.length);
+    for (int i = 0; i < n; i++) {
+      if (perfs[i] != null && perfs[i].status == cudnnStatus.CUDNN_STATUS_SUCCESS
+          && (memoryLimitInBytes <= 0 || perfs[i].memory <= memoryLimitInBytes)) {
+        return perfs[i].algo;
+      }
+    }
+    for (int i = 0; i < n; i++) {
+      if (perfs[i] != null && perfs[i].status == cudnnStatus.CUDNN_STATUS_SUCCESS) {
+        return perfs[i].algo;
+      }
+    }
+    return n > 0 && perfs[0] != null ? perfs[0].algo : cudnnConvolutionBwdFilterAlgo.CUDNN_CONVOLUTION_BWD_FILTER_ALGO_0;
   }
 
   /**
@@ -1060,15 +1086,28 @@ public class CudnnHandle extends CudaDevice {
                                  final cudnnConvolutionDescriptor convDesc, final cudnnTensorDescriptor dstTensorDesc,
                                  final long memoryLimitInBytes) {
     long startTime = RefSystem.nanoTime();
-    @Nonnull final int algoArray[] = {-1};
-    cudnnConvolutionFwdAlgoPerf[] perfs = { new cudnnConvolutionFwdAlgoPerf() };
-    final int result = JCudnn.cudnnFindConvolutionForwardAlgorithm(handle, srcTensorDesc, filterDesc, convDesc,
-        dstTensorDesc, 1, algoArray, perfs);
+    final int maxAlgos = 8;
+    @Nonnull final int[] returnedCount = {0};
+    cudnnConvolutionFwdAlgoPerf[] perfs = new cudnnConvolutionFwdAlgoPerf[maxAlgos];
+    final int result = JCudnn.cudnnGetConvolutionForwardAlgorithm_v7(handle, srcTensorDesc, filterDesc, convDesc,
+        dstTensorDesc, maxAlgos, returnedCount, perfs);
     getForwardAlgorithm_execution.accept((RefSystem.nanoTime() - startTime) / 1e9);
-    log("cudnnGetConvolutionForwardAlgorithm", result,
-        new Object[]{this.addRef(), srcTensorDesc, filterDesc, convDesc, dstTensorDesc, 1, algoArray, perfs});
+    log("cudnnGetConvolutionForwardAlgorithm_v7", result,
+        new Object[]{this.addRef(), srcTensorDesc, filterDesc, convDesc, dstTensorDesc, maxAlgos, returnedCount, perfs});
     CudaSystem.handle(result);
-    return algoArray[0];
+    int n = Math.min(returnedCount[0], perfs.length);
+    for (int i = 0; i < n; i++) {
+      if (perfs[i] != null && perfs[i].status == cudnnStatus.CUDNN_STATUS_SUCCESS
+          && (memoryLimitInBytes <= 0 || perfs[i].memory <= memoryLimitInBytes)) {
+        return perfs[i].algo;
+      }
+    }
+    for (int i = 0; i < n; i++) {
+      if (perfs[i] != null && perfs[i].status == cudnnStatus.CUDNN_STATUS_SUCCESS) {
+        return perfs[i].algo;
+      }
+    }
+    return n > 0 && perfs[0] != null ? perfs[0].algo : cudnnConvolutionFwdAlgo.CUDNN_CONVOLUTION_FWD_ALGO_IMPLICIT_GEMM;
   }
 
   /**

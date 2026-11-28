@@ -148,7 +148,7 @@ public class CudaTensor extends ReferenceCountingBase implements CudaSystem.Cuda
         TimedResult<CudaMemory> timedResult = TimedResult.time(() -> memory.copy(cudaDevice.addRef(), memoryType));
         if (CudaTensorList.logger.isDebugEnabled()) CudaTensorList.logger.debug(RefString.format(
             "Copy %s bytes in %.4f from Tensor %s on GPU %s to %s at %s, created by %s", memory.size,
-            timedResult.seconds(), Integer.toHexString(RefSystem.identityHashCode(this)),
+            timedResult.seconds(), Integer.toHexString(RefSystem.identityHashCode(this.addRef())),
             memory.getDeviceId(), cudaDevice.getDeviceId(), Util.toString(Util.getStackTrace()).replaceAll("\n", "\n\t"),
             Util.toString(createdBy).replaceAll("\n", "\n\t")));
         CudaMemory result = timedResult.getResult();
@@ -198,7 +198,7 @@ public class CudaTensor extends ReferenceCountingBase implements CudaSystem.Cuda
     assert cudaTensor.isDense();
     if (CudaTensorList.logger.isDebugEnabled()) CudaTensorList.logger
         .debug(RefString.format("Densified %s bytes in %.4f from GPU %s at %s, created by %s", cudaTensor.memory.size,
-            timedResult.seconds(), Integer.toHexString(RefSystem.identityHashCode(this)),
+            timedResult.seconds(), Integer.toHexString(RefSystem.identityHashCode(this.addRef())),
             Util.toString(Util.getStackTrace()).replaceAll("\n", "\n\t"),
             Util.toString(createdBy).replaceAll("\n", "\n\t")));
     timedResult.freeRef();

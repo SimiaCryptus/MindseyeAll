@@ -19,6 +19,7 @@
 
 package com.simiacryptus.mindseye.test;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.simiacryptus.mindseye.lang.*;
 import com.simiacryptus.ref.lang.RefIgnore;
 import com.simiacryptus.ref.lang.RefUtil;
@@ -71,6 +72,7 @@ public class SimpleEval extends ReferenceCountingBase implements Callable<Simple
    * @return the tensor [ ]
    */
   @Nullable
+  @JsonIgnore
   public Tensor[] getDerivative() {
     return RefUtil.addRef(derivative);
   }
@@ -81,6 +83,7 @@ public class SimpleEval extends ReferenceCountingBase implements Callable<Simple
    * @return the output
    */
   @Nullable
+  @JsonIgnore
   public Tensor getOutput() {
     return output == null ? null : output.addRef();
   }

@@ -228,9 +228,11 @@ public class BasicTrainable extends ReferenceCountingBase implements DataTrainab
 
   @NotNull
   private PointSample normalize(PointSample pointSample) {
-    PointSample normalize = pointSample.normalize();
-    pointSample.freeRef();
-    return normalize;
+    try {
+      return pointSample.normalize();
+    } finally {
+      pointSample.freeRef();
+    }
   }
 
 }

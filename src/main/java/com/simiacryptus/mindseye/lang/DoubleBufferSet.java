@@ -153,25 +153,21 @@ public abstract class DoubleBufferSet<K, V extends DoubleBuffer<K>> extends Refe
   @Nonnull
   public DoubleBufferSet<K, V> map(@Nonnull final RefFunction<V, V> mapper) {
     RefHashSet<Map.Entry<K, V>> entries = map.entrySet();
-    try {
-      RefStream<Map.Entry<K, V>> stream = entries.stream();
-      if (map.size() > 100) {
-        stream = stream.parallel();
-      }
-      final RefMap<K, V> newMap = stream.collect(RefCollectors.toMap(e -> {
+    final RefMap<K, V> newMap = map.size() > 100 ? new RefConcurrentHashMap<>() : new RefHashMap<>();
+    try (RefStream<Map.Entry<K, V>> stream = map.size() > 100 ? entries.stream().parallel() : entries.stream()) {
+      stream.forEach(e -> {
         try {
-          return e.getKey();
+          K key = e.getKey();
+          V val = mapper.apply(e.getValue());
+          RefUtil.freeRef(newMap.put(key, val));
         } finally {
           RefUtil.freeRef(e);
         }
-      }, e -> {
-        try {
-          return mapper.apply(e.getValue());
-        } finally {
-          RefUtil.freeRef(e);
-        }
-      }));
+      });
       return new Delegate(this.addRef(), newMap);
+    } catch (Throwable t) {
+      newMap.freeRef();
+      throw t;
     } finally {
       entries.freeRef();
     }
